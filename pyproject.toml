@@ -1,0 +1,14 @@
+[tool.ruff]
+line-length = 79
+target-version = "py310"
+
+[tool.ruff.lint]
+# E/W - pycodestyle (PEP-8), F - pyflakes, I - isort,
+# N - pep8-naming, D - pydocstyle, B - bugbear, UP - pyupgrade
+select = ["E", "W", "F", "I", "N", "D", "B", "UP"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.format]
+quote-style = "double"

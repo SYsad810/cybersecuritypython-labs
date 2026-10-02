@@ -1,0 +1,21 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+
+# Віртуальне середовище
+.venv/
+venv/
+
+# Кеш Ruff
+.ruff_cache/
+
+# Дані, що створюються динамічно (бази, журнали)
+labs/*/data/*.csv
+labs/*/data/*.json
+*.db
+
+# IDE / системні файли
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
