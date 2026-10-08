@@ -12,6 +12,7 @@ venv/
 # Дані, що створюються динамічно (бази, журнали)
 labs/*/data/*.csv
 labs/*/data/*.json
+labs/*/data/*.log
 *.db
 
 # IDE / системні файли
