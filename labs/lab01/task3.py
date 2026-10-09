@@ -51,17 +51,37 @@ def generate_hash(password: str, salt: str = "00000") -> str:
 
 
 def create_user(username: str, password: str) -> tuple[str, str]:
-    """Створити запис користувача (логін, хеш) з персональною сіллю."""
+    """Створити запис користувача (логін, хеш) з персональною сіллю.
+
+    Raises:
+        ValueError: якщо логін або пароль порожні.
+        ValidationError: якщо пароль закороткий.
+
+    """
+    if not username:
+        raise ValueError("Логін не може бути порожнім")
     return username, generate_hash(password, SALT)
 
 
-def create_users(users_list: tuple[tuple[str, str], ...]) -> None:
-    """Захешувати паролі всіх користувачів і записати їх у CSV."""
+def create_users(users_list: tuple[tuple[str, str], ...]) -> int:
+    """Захешувати паролі користувачів і записати валідних у CSV.
+
+    Некоректні записи пропускаються з повідомленням, решта зберігається.
+
+    Returns:
+        Кількість користувачів, записаних у CSV.
+
+    """
     os.makedirs(DATA_DIR, exist_ok=True)
-    records = [create_user(login_, pwd) for login_, pwd in users_list]
+    records = []
+    for login_, pwd in users_list:
+        try:
+            records.append(create_user(login_, pwd))
+        except (ValueError, ValidationError) as error:
+            print(f"[ПРОПУЩЕНО] {login_!r}: {error}")
     with open(USERS_CSV, "w", newline="", encoding="utf-8") as file:
-        writer = csv.writer(file)
-        writer.writerows(records)
+        csv.writer(file).writerows(records)
+    return len(records)
 
 
 def read_users(path: str = USERS_CSV) -> list[tuple[str, str]]:
@@ -183,8 +203,10 @@ def main() -> None:
 
     try:
         print("\n--- Реєстрація користувачів ---")
-        create_users(users_to_register)
-        print(f"Записано {len(users_to_register)} користувачів у CSV")
+        written = create_users(users_to_register)
+        print(
+            f"Записано {written} з {len(users_to_register)} користувачів у CSV"
+        )
 
         users_db.clear()
         users_db.extend(read_users())
@@ -204,7 +226,10 @@ def main() -> None:
             print(f"login({username!r}) -> {'SUCCESS' if ok else 'FAILURE'}")
 
         print("\nСпроба входу з порожнім паролем:")
-        login("auditor", "")
+        try:
+            login("auditor", "")
+        except ValueError as error:
+            print(f"login('auditor') -> FAILURE ({error})")
     except FileNotFoundError as error:
         print(f"[ПОМИЛКА] Файл не знайдено: {error}")
     except PermissionError as error:
