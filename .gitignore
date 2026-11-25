@@ -28,3 +28,7 @@ labs/lab03/data/*.db
 labs/lab03/data/*.db-*
 # Початкові дані ЛР №3 мають бути в Git
 !labs/lab03/data/seed.json
+
+# ЛР №4: кеш pytest
+.pytest_cache/
+!labs/lab04/data/nvd_sample.json
